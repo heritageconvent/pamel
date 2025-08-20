@@ -1,0 +1,188 @@
+﻿
+jQuery(function ($) {
+
+
+
+    var tableId = '#examdata'
+
+    var tableHead = document.querySelector('.sticky-nav')
+    tableHead.addEventListener('sticky-change', function (e) {
+
+        this.classList.toggle('is-stuck', e.detail.isSticky)
+    })
+
+
+
+    $.extend(true, $.fn.dataTable.defaults, {
+        dom:
+            "<'row'<'col-12 col-sm-6'l><'col-12 col-sm-6 text-right table-tools-col'f>>" +
+            "<'row'<'col-12'tr>>" +
+            "<'row'<'col-12 col-md-5'i><'col-12 col-md-7'p>>",
+        renderer: 'bootstrap'
+    })
+
+
+    var $_table = $(tableId).DataTable({
+        responsive: true,
+       
+
+
+        colReorder: {
+
+            fixedColumnsLeft: 1,
+            fixedColumnsRight: 1
+        },
+
+
+
+        classes: {
+            sLength: "dataTables_length text-left w-auto",
+        },
+
+
+
+        columnDefs: [
+            {
+                orderable: false,
+                className: null,
+                targets: 0
+            },
+            {
+                orderable: false,
+                className: null,
+                targets: 1
+            },
+            {
+                orderable: false,
+                className: null,
+                targets: -1
+            },
+            {
+                responsivePriority: 1,
+                targets: 2
+            }
+        ],
+
+
+
+        select: {
+            style: 'multis'
+        },
+
+
+        order: [],
+
+        language: {
+            search: '',
+            searchPlaceholder: " "
+        }
+
+
+
+
+
+    })
+
+    $('.table-tools-col')
+        .append($_table.buttons().container())
+
+        .find('.dataTables_filter').appendTo('.page-tools').find('input').addClass('pl-45 radius-round').removeClass('form-control-sm')
+
+    var _highlightSelectedRow = function (row) {
+        /*row.querySelector('input[type=checkbox]').checked = true*/
+        row.classList.add('bgc-success-l3')
+        row.classList.remove('bgc-h-default-l4')
+
+    }
+
+
+
+    var _unhighlightDeselectedRow = function (row) {
+        /* row.querySelector('input[type=checkbox]').checked = false*/
+        row.classList.remove('bgc-success-l3')
+        row.classList.add('bgc-h-default-l4')
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // don't select row if we click on the "show details" `plus` sign (td)
+    $(tableId).on('click', 'td.dtr-control', function (e) {
+        e.stopPropagation()
+    })
+
+
+    // add/remove bgc-h-* class to TH when soring columns
+    var previousTh = null
+    var toggleTH_highlight = function (th) {
+        th.classList.toggle('bgc-yellow-l2')
+        th.classList.toggle('bgc-h-yellow-l3')
+        th.classList.toggle('text-blue-d2')
+    }
+
+    $(tableId)
+        .on('click', 'th:not(.sorting_disabled)', function () {
+            if (previousTh != null) toggleTH_highlight(previousTh)// unhighlight previous TH
+            toggleTH_highlight(this)
+            previousTh = this
+        })
+
+    // don't select row when clicking on the edit icon
+    $('a[data-action=edit').on('click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()// don't select
+    })
+
+    // add a dark border
+    $('.dataTables_wrapper')
+        .addClass('border-b-1 border-x-1 brc-default-l2')
+
+        // highlight DataTable header
+        // also already done in CSS, but you can use custom colors here
+        .find('.row:first-of-type')
+        .addClass('border-b-1 brc-default-l3 bgc-blue-l4')
+        .next().addClass('mt-n1px')// move the next `.row` up by 1px to go below header's border
+
+    // highlight DataTable footer
+    $('.dataTables_wrapper')
+        .find('.row:last-of-type')
+        .addClass('border-t-1 brc-default-l3 mt-n1px bgc-default-l4')
+
+
+    // if the table has scrollbars, add ace styling to it
+    $('.dataTables_scrollBody').aceScroll({ color: "grey" })
+
+
+    //enable tooltips
+    setTimeout(function () {
+        $('.dt-buttons button')
+            .each(function () {
+                var div = $(this).find('span').first()
+                if (div.length == 1) $(this).tooltip({ container: 'body', title: div.parent().text() })
+                else $(this).tooltip({ container: 'body', title: $(this).text() })
+            })
+        $('[data-rel=tooltip').tooltip({ container: 'body' })
+    }, 0)
+
+})

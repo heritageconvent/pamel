@@ -1,0 +1,10 @@
+﻿
+
+@font-face {
+    font-family: 'AMERICAN-TEXT-BT';
+    src: local('AMERICAN-TEXT-BT'),url('../../../../../fonts/AMERICAN-TEXT-BT.TTF') format('truetype');
+}
+
+.hcFont {
+    font-family: 'AMERICAN-TEXT-BT' !important;
+}
